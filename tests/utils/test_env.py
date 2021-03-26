@@ -136,7 +136,12 @@ def check_output_wrapper(version=Version.parse("3.7.1")):
 
 
 def test_activate_activates_non_existing_virtualenv_no_envs_file(
-    tmp_dir, manager, poetry, config, mocker
+    tmp_dir,
+    manager,
+    poetry,
+    config,
+    mocker,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -159,7 +164,7 @@ def test_activate_activates_non_existing_virtualenv_no_envs_file(
     m.assert_called_with(
         Path(tmp_dir) / "{}-py3.7".format(venv_name),
         executable="python3.7",
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
 
     envs_file = TOMLFile(Path(tmp_dir) / "envs.toml")
@@ -249,7 +254,12 @@ def test_activate_activates_same_virtualenv_with_envs_file(
 
 
 def test_activate_activates_different_virtualenv_with_envs_file(
-    tmp_dir, manager, poetry, config, mocker
+    tmp_dir,
+    manager,
+    poetry,
+    config,
+    mocker,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -279,7 +289,7 @@ def test_activate_activates_different_virtualenv_with_envs_file(
     m.assert_called_with(
         Path(tmp_dir) / "{}-py3.6".format(venv_name),
         executable="python3.6",
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
 
     assert envs_file.exists()
@@ -292,7 +302,12 @@ def test_activate_activates_different_virtualenv_with_envs_file(
 
 
 def test_activate_activates_recreates_for_different_patch(
-    tmp_dir, manager, poetry, config, mocker
+    tmp_dir,
+    manager,
+    poetry,
+    config,
+    mocker,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -333,7 +348,7 @@ def test_activate_activates_recreates_for_different_patch(
     build_venv_m.assert_called_with(
         Path(tmp_dir) / "{}-py3.7".format(venv_name),
         executable="python3.7",
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
     remove_venv_m.assert_called_with(Path(tmp_dir) / "{}-py3.7".format(venv_name))
 
@@ -639,7 +654,12 @@ def test_run_with_input_non_zero_return(tmp_dir, tmp_venv):
 
 
 def test_create_venv_tries_to_find_a_compatible_python_executable_using_generic_ones_first(
-    manager, poetry, config, mocker, config_virtualenvs_path
+    manager,
+    poetry,
+    config,
+    mocker,
+    config_virtualenvs_path,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -661,12 +681,17 @@ def test_create_venv_tries_to_find_a_compatible_python_executable_using_generic_
     m.assert_called_with(
         config_virtualenvs_path / "{}-py3.7".format(venv_name),
         executable="python3",
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
 
 
 def test_create_venv_tries_to_find_a_compatible_python_executable_using_specific_ones(
-    manager, poetry, config, mocker, config_virtualenvs_path
+    manager,
+    poetry,
+    config,
+    mocker,
+    config_virtualenvs_path,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -685,7 +710,7 @@ def test_create_venv_tries_to_find_a_compatible_python_executable_using_specific
     m.assert_called_with(
         config_virtualenvs_path / "{}-py3.9".format(venv_name),
         executable="python3.9",
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
 
 
@@ -742,7 +767,12 @@ def test_create_venv_does_not_try_to_find_compatible_versions_with_executable(
 
 
 def test_create_venv_uses_patch_version_to_detect_compatibility(
-    manager, poetry, config, mocker, config_virtualenvs_path
+    manager,
+    poetry,
+    config,
+    mocker,
+    config_virtualenvs_path,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -769,12 +799,17 @@ def test_create_venv_uses_patch_version_to_detect_compatibility(
         config_virtualenvs_path
         / "{}-py{}.{}".format(venv_name, version.major, version.minor),
         executable=None,
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
 
 
 def test_create_venv_uses_patch_version_to_detect_compatibility_with_executable(
-    manager, poetry, config, mocker, config_virtualenvs_path
+    manager,
+    poetry,
+    config,
+    mocker,
+    config_virtualenvs_path,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -804,12 +839,17 @@ def test_create_venv_uses_patch_version_to_detect_compatibility_with_executable(
         config_virtualenvs_path
         / "{}-py{}.{}".format(venv_name, version.major, version.minor - 1),
         executable="python{}.{}".format(version.major, version.minor - 1),
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
 
 
 def test_activate_with_in_project_setting_does_not_fail_if_no_venvs_dir(
-    manager, poetry, config, tmp_dir, mocker
+    manager,
+    poetry,
+    config,
+    tmp_dir,
+    mocker,
+    venv_flags_default,
 ):
     if "VIRTUAL_ENV" in os.environ:
         del os.environ["VIRTUAL_ENV"]
@@ -838,7 +878,7 @@ def test_activate_with_in_project_setting_does_not_fail_if_no_venvs_dir(
     m.assert_called_with(
         poetry.file.parent / ".venv",
         executable="python3.7",
-        flags={"always-copy": False, "system-site-packages": False},
+        flags=venv_flags_default,
     )
 
     envs_file = TOMLFile(Path(tmp_dir) / "virtualenvs" / "envs.toml")
